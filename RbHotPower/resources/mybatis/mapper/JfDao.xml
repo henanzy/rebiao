@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "http://mybatis.org/dtd/mybatis-3-mapper.dtd" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.hnzy.rb.dao.JfDao">
+	<resultMap type="Jf" id="jf">
+		<result property="id" column="ID" />
+		<result property="rEAD_TIME" column="READ_TIME" />
+		<result property="tHIS_VALUE" column="THIS_VALUE" />
+		<result property="mETER_CODE" column="METER_CODE" />
+		<result property="iNSTANT_FLOW" column="INSTANT_FLOW" />
+		<result property="aCCUMULATE_FLOW" column="ACCUMULATE_FLOW" />
+		<result property="sTEAM_BACKWATER" column="STEAM_BACKWATER" />
+		<result property="rEMARK" column="REMARK" />
+		<result property="pRESSURE" column="PRESSURE" />
+		<result property="tEMPERATURE" column="TEMPERATURE" />
+		<result property="lAST_VALUE" column="LAST_VALUE"/>
+		<result property="uSE_VALUE_KWH" column="USE_VALUE_KWH" />
+		<result property="uSE_VALUE_GJ" column="USE_VALUE_GJ" />
+		<result property="rEAD_STATE" column="READ_STATE" />
+		<result property="sETTLE_TYPE" column="SETTLE_TYPE"/>
+		<result property="cYCLE" column="CYCLE"/>
+	</resultMap>
+	<select id="jfSel" resultMap="jf">
+	select * from  meter_read
+	</select>
+	<update id="updateJf">
+	update set INSTANT_FLOW=#{iNSTANT_FLOW},ACCUMULATE_FLOW=#{aCCUMULATE_FLOW},THIS_VALUE=#{tHIS_VALUE}
+	,METER_CODE=#{mETER_CODE},READ_TIME=#{rEAD_TIME},REMARK=#{rEMARK},LAST_VALUE#{lAST_VALUE}
+	</update>
+	<insert id="insertJf">
+	 insert into meter_read (
+	 INSTANT_FLOW,
+	 ACCUMULATE_FLOW,
+	 THIS_VALUE,
+	 METER_CODE,
+	 READ_TIME,
+	 REMARK,
+	 USE_VALUE_KWH,
+	 LAST_VALUE,
+	 SETTLE_TYPE,
+	 CYCLE
+	 )Values(
+	 #{iNSTANT_FLOW ,jdbcType=VARCHAR},
+	 #{aCCUMULATE_FLOW,jdbcType=VARCHAR},
+	 #{tHIS_VALUE,jdbcType=VARCHAR},
+	 #{mETER_CODE,jdbcType=VARCHAR},
+	 #{rEAD_TIME,jdbcType=VARCHAR},
+	 #{rEMARK,jdbcType=VARCHAR},
+	 #{uSE_VALUE_KWH,jdbcType=VARCHAR},
+	 #{lAST_VALUE,jdbcType=VARCHAR},
+	 #{sETTLE_TYPE,jdbcType=VARCHAR},
+	 #{cYCLE,jdbcType=VARCHAR}
+	 )
+	</insert>
+</mapper>

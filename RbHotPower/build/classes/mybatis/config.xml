@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "http://mybatis.org/dtd/mybatis-3-config.dtd" "mybatis-3-config.dtd" >
+<configuration>
+<typeAliases>
+<typeAlias type="com.hnzy.rb.pojo.UserLogin" alias="UserLogin"/>
+<typeAlias type="com.hnzy.rb.pojo.Rb" alias="Rb"/>
+<typeAlias type="com.hnzy.rb.pojo.Yh" alias="Yh"/>
+<typeAlias type="com.hnzy.rb.pojo.Village" alias="Village"/>
+<typeAlias type="com.hnzy.rb.pojo.Rz" alias="Rz"/>
+<typeAlias type="com.hnzy.rb.pojo.CsTime" alias="CsTime"/>
+<typeAlias type="com.hnzy.rb.pojo.Qg" alias="Qg"/>
+<typeAlias type="com.hnzy.rb.pojo.Jzq" alias="Jzq"/>
+<typeAlias type="com.hnzy.rb.pojo.CxRb" alias="CxRb"/>
+<typeAlias type="com.hnzy.rb.pojo.Jf" alias="Jf"/>
+<typeAlias type="com.hnzy.rb.pojo.RbJs" alias="RbJs"/>
+</typeAliases>
+</configuration>

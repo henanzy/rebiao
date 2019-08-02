@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "http://mybatis.org/dtd/mybatis-3-mapper.dtd" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.hnzy.rb.dao.UserDao">
+<resultMap type="UserLogin" id="userLogin">
+	<id property="id" column="ID"/>
+   <result property="userName" column="UserName" />
+   <result property="passWord" column="Password" />
+</resultMap>
+<select id="findNamePwd" resultMap="userLogin" parameterType="UserLogin">
+select UserName,Password,ID from T_UserLogin where UserName=#{userName} and Password=#{passWord}
+</select>
+<update id="UpdaPwd" parameterType="UserLogin">
+update T_UserLogin set Password=#{passWord} where ID=#{id}
+</update>
+<insert id="addNamePwd" parameterType="UserLogin">
+insert into T_UserLogin (userName,passWord) values(#{userName},#{passWord})
+</insert>
+<select id="findName" resultMap="userLogin" parameterType="UserLogin">
+ select * from T_UserLogin where UserName=#{userName} 
+</select>
+</mapper>

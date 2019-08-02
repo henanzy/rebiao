@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "http://mybatis.org/dtd/mybatis-3-mapper.dtd" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.hnzy.rb.dao.CsTimeDao">
+	<resultMap type="CsTime" id="csTime">
+		<result property="id" column="id" />
+		<result property="cstime" column="cstime" />
+		<result property="Type" column="Type" />
+	</resultMap>
+<select id="findCsTime" resultMap="csTime">
+select id,cstime from CsTime
+</select> 
+<update id="updCsTime" parameterType="CsTime">
+update CsTime set cstime=#{cstime} where Type=1 
+</update>
+<update id="updCsTime1" parameterType="CsTime">
+update CsTime set cstime=#{cstime} where Type=2
+</update>
+</mapper>

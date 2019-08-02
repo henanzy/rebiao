@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:lang="http://www.springframework.org/schema/lang"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd
+		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-4.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.1.xsd
+		http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-4.1.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd
+		http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.1.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.1.xsd">
+	<context:annotation-config />
+	<aop:aspectj-autoproxy />
+	<!-- 扫描service层 -->
+	<context:component-scan base-package="com.hnzy.rb.service"></context:component-scan>
+	<!-- 加载数据库配置文件 -->
+	<context:property-placeholder location="classpath:jdbc.properties" />
+	<!-- 配置数据库连接池 -->
+	<bean id="dse" class="org.apache.commons.dbcp.BasicDataSource"
+		p:url="${jdbc.url}"
+	    p:username="${jdbc.user}" 
+		p:password="${jdbc.password}"
+		p:driverClassName="${jdbc.driver}" 
+		p:maxActive="30"
+		p:maxIdle="10"
+		p:maxWait="1000" />
+	<bean id ="ds" class= "org.apache.commons.dbcp.BasicDataSource"  destroy-method="close" 
+    	p:maxActive="100" 
+		p:maxIdle="20"
+		p:maxWait="2000" 
+    >  
+          <property name ="driverClassName" value= "oracle.jdbc.driver.OracleDriver"></property >  
+          <property name ="url" value= "jdbc:oracle:thin:@218.29.157.150:1522:ORCL" ></property >  
+          <property name ="username" value="charge_smx_qzj"> </property>  
+          <property name ="password" value="charge_smx_qzj"></property>  
+         <!--  <property name ="url" value= "jdbc:oracle:thin:@218.29.157.150:1522:ORCL" ></property >  
+          <property name ="username" value="charge_smx_qzj"> </property>  
+          <property name ="password" value="charge_smx_qzj"></property>  -->
+          <property name="validationQuery" value="select * from dual"/>
+    </bean > 	
+		<!-- socket开始 ===========-->
+		<bean class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+        <property name="customEditors">
+            <map>
+                <entry key="java.net.SocketAddress"
+                    value="org.apache.mina.integration.beans.InetSocketAddressEditor">
+                </entry>
+            </map>
+        </property>
+    </bean>
+	 <bean id="ioAcceptor" class="org.apache.mina.transport.socket.nio.NioSocketAcceptor"
+        init-method="bind" destroy-method="unbind">
+        <!--端口号-->
+        <property name="defaultLocalAddress" value=":9983" />
+        
+        <!--绑定自己实现的handler-->
+        <property name="handler" ref="serverHandler" />
+        <!--声明过滤器的集合-->
+        <property name="filterChainBuilder" ref="filterChainBuilder" />
+        <property name="reuseAddress" value="true" />
+    </bean>
+	<bean id="filterChainBuilder"
+        class="org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder">
+        <property name="filters">
+            <map>
+                <!--mina自带的线程池filter-->
+                <entry key="executor" value-ref="executorFilter" />
+                <entry key="mdcInjectionFilter" value-ref="mdcInjectionFilter" />
+                <!--自己实现的编解码器filter-->
+                <entry key="codecFilter" value-ref="codecFilter" />
+                <!--日志的filter-->
+                <entry key="loggingFilter" value-ref="loggingFilter" />
+                <!--心跳filter-->
+                <entry key="keepAliveFilter" value-ref="keepAliveFilter" />
+            </map>
+        </property>
+    </bean>
+    <!-- session config -->
+    <bean id="sessionConfig" factory-bean="ioAcceptor"
+        factory-method="getSessionConfig" >
+        <property name="bothIdleTime" value="10"/>
+        <property name="receiveBufferSize" value="6024"/>
+        <property name="sendBufferSize" value="6024"/>
+    </bean>
+
+ <!-- executorFilter多线程处理 -->  
+    <bean id="executorFilter" class="org.apache.mina.filter.executor.ExecutorFilter" />
+    <bean id="mdcInjectionFilter" class="org.apache.mina.filter.logging.MdcInjectionFilter">
+        <constructor-arg value="remoteAddress" />
+    </bean>
+
+    <!--日志-->
+    <bean id="loggingFilter" class="org.apache.mina.filter.logging.LoggingFilter" />
+
+    <!--编解码-->
+    <bean id="codecFilter" class="org.apache.mina.filter.codec.ProtocolCodecFilter">
+        <constructor-arg>
+            <!--构造函数的参数传入自己实现的对象-->
+            <bean class="com.hnzy.socket.codec.Str16CodecFactory"></bean>
+        </constructor-arg>
+    </bean>
+
+    <!--心跳检测filter-->
+    <bean id="keepAliveFilter" class="org.apache.mina.filter.keepalive.KeepAliveFilter">
+        <!--构造函数的第一个参数传入自己实现的工厂-->
+        <constructor-arg>
+            <bean class="com.hnzy.socket.server.ServerKeepAliveFactory"></bean>
+        </constructor-arg>
+        <!--第二个参数需要的是IdleStatus对象，value值设置为读写空闲-->
+        <constructor-arg type = "org.apache.mina.core.session.IdleStatus" value="BOTH_IDLE" >
+       </constructor-arg>
+        <!--心跳频率，不设置则默认60s  -->
+        <property name="requestInterval" value="11160" />
+        <!--心跳超时时间，不设置则默认30s    -->
+        <property name="requestTimeout" value="11160" />
+        <!--不设置默认false-->
+        <property name="forwardEvent" value="true" />
+     
+    </bean>
+      <bean id="serverHandler" class="com.hnzy.socket.server.ServerHandler" />
+    <!-- socket结束 ===========-->
+		
+		<!-- 定时器开始=== -->
+  	<!-- <bean id="quartzManagerBean" class="com.hnzy.socket.QuartzManager">
+		<property name="scheduler" ref="schedulerManager" />
+	</bean>
+	<bean id="quartzManagerJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="quartzManagerBean" />
+		<property name="targetMethod" value="reScheduleJob" />
+		<property name="concurrent" value="false" />
+	</bean>
+	主定时计划
+	<bean id="quartzManagerTrigger"
+		class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="quartzManagerJobDetail" />
+		延时1秒 执行任务
+		<property name="startDelay" value="1000" />
+		任务执行周期 6秒
+		<property name="repeatInterval" value="20000" />
+	</bean>
+	总管理类 如果将lazy-init='false'那么容器启动就会执行调度程序 
+	<bean id="schedulerManager" lazy-init="false" autowire="no"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="quartzManagerTrigger" />
+			</list>
+		</property>
+	</bean> -->
+  	<!-- 定时器结束=== -->
+  	
+	<!-- 配置mybatis session工厂类，指定数据源，主配置文件，mapper映射文件，实体类所在包信息 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"
+		p:dataSource-ref="dataSource" 
+		p:configLocation="classpath:mybatis/config.xml"
+		p:mapperLocations="classpath:mybatis/mapper/*.xml"
+		p:typeAliasesPackage="com.hnzy.rb.pojo" 
+		/>
+
+	<!-- 指定dao接口所在位置，该类会根据接口和mapper配置文件自动创建接口的实现类，service层直接使用即可 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer"
+		p:basePackage="com.hnzy.rb.dao" />
+    <!-- 动态配置数据源 -->  
+      <bean id ="dataSource" class= "com.hnzy.rb.datasource.DynameicDataSource" >  
+          <property name ="targetDataSources">  
+                <map key-type ="java.lang.String">  
+                      <entry value-ref ="dse" key= "dse"></entry >  
+                      <entry value-ref ="ds" key= "ds"></entry >  
+                </map >  
+          </property >  
+          <property name ="defaultTargetDataSource" ref= "dse"></property > 
+   </bean>
+	<!-- 事物管理 -->
+	<bean id="txManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+		p:dataSource-ref="dataSource" />
+
+	<aop:config>
+		<aop:pointcut expression="execution(* com.hnzy.rb.service.**.*(..))"
+			id="serviceMethods" />
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceMethods" />
+	</aop:config>
+	<tx:advice id="txAdvice" transaction-manager="txManager">
+		<tx:attributes>
+			<tx:method name="save" propagation="REQUIRED" />
+			<tx:method name="update*" propagation="REQUIRED" />
+			<tx:method name="delete*" propagation="REQUIRED" />
+			<tx:method name="get*" read-only="true" />
+			<tx:method name="find*" read-only="true" />
+		</tx:attributes>
+	</tx:advice>
+	<!-- spring定时器 -->
+<bean id="myTest" class="com.hnzy.rb.util.TimeSix"></bean>
+ <bean id="queat" class="com.hnzy.socket.queat" init-method="queats" >
+</bean>
+<task:scheduled-tasks>
+<!-- 每天一点调用一次 热表异常查询 -->
+<task:scheduled ref="myTest" method="Exp" cron="0 0 12,22 * * ? " />
+<task:scheduled ref="myTest" method="GHExp" cron="0 0 13,23 * * ? " /> 
+<!-- <task:scheduled ref="myTest" method="rbexp" cron="0 0 12,14,19 * * ? " />  -->
+ <!-- 10.15秒调用一次 -->
+<!--  <task:scheduled ref="Cb" method="Cb" cron="0 15 10 * * ?" /> -->
+</task:scheduled-tasks>
+</beans>

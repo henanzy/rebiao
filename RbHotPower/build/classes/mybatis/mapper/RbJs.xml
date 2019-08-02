@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "http://mybatis.org/dtd/mybatis-3-mapper.dtd" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.hnzy.rb.dao.RbJsDao">
+	<resultMap type="RbJs" id="rbJs">
+		<result property="id" column="ID" />
+		<result property="yhBm" column="YhBm" />
+		<result property="rbAd" column="RbAd" />
+		<result property="status" column="Status" />
+		<result property="dj" column="Dj" />
+		<result property="zf" column="Zf" />
+		<result property="sta" column="Sta" />
+		<result property="cbsj" column="Cbsj" />
+		<result property="scBs" column="ScBs" />
+		<result property="bcBs" column="BcBs" />
+		<result property="jsBs" column="JsBs"/>
+		<result property="energy" column="Energy"/>
+		<result property="flow" column="flow"/>
+		<!-- <result property="yh.bz" column="Bz" />
+		<result property="yh.resNum" column="resNum"></result>
+		<result property="yh.rb.rbType" column="rbType"></result>
+		<result property="yh.rb.energy" column="energy"></result>
+		<result property="yh.rb.power" column="power"></result>
+		<result property="yh.rb.flow" column="flow"></result>
+		<result property="yh.rb.inTmp" column="inTmp"></result>
+		<result property="yh.rb.outTmp" column="outTmp"></result>
+		<result property="yh.rb.diffTmp" column="diffTmp"></result>
+		<result property="yh.rb.errCode" column="errCode"></result>
+		<result property="yh.rb.recordTime" column="recordTime"></result>
+		<result property="yh.rb.energyLj" column="energyLj"></result> -->
+		<result property="rbfl" column="rbfl"></result>
+		<result property="rlc" column="rlc"></result>
+	</resultMap>
+	<select id="findRbJs" resultMap="rbJs">
+	select distinct yh.Id,yh.Rbfl, yh.ResNum,yh.RbAd,yh.bz,Rb.status,rj.BcBs,rb.Energy,rb.Energy-rj.BcBs as Rlc,
+	rb.EnergyLj,rb.ErrCode,rb.In_Tmp,rb.Out_Tmp,rb.Power,rb.RecordTime,rb.Flow
+ 	from T_RbJs rj  ,T_YhInfo yh,T_RbInfo rb  
+	where  yh.ResNum=rj.YhBm  and rb.RbAd=yh.RBAd
+	</select>
+</mapper>

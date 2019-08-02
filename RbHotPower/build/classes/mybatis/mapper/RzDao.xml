@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "http://mybatis.org/dtd/mybatis-3-mapper.dtd" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.hnzy.rb.dao.RzDao">
+	<resultMap type="Rz" id="rz">
+		<result property="id" column="ID" />
+		<result property="czr" column="czr" />
+		<result property="cz" column="cz" />
+		<result property="czsj" column="czsj" />
+	</resultMap>
+<select id="findRz" resultMap="rz">
+select top 500 * from T_RbRz    order by czsj desc
+</select>
+<insert id="InsRz"  parameterType="Rz">
+insert T_RbRz (czr,cz,czsj) values(#{czr},#{cz},#{czsj})
+</insert>
+<select id="findCz" parameterType="Rz" resultMap="rz">
+select * from T_RbRz where cz LIKE #{cz} order by czsj desc 
+</select>
+</mapper>

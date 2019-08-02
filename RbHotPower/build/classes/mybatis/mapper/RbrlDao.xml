@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "http://mybatis.org/dtd/mybatis-3-mapper.dtd" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.hnzy.rb.dao.RbrlDao">
+	<resultMap type="RbrlUser" id="rbrlUser">
+		<result property="cLIENTNO" column="CLIENTNO" />
+		<result property="cLIENTNAME" column="CLIENTNAME" />
+		<result property="aDDRESS" column="ADDRESS" />
+		<result property="rbUser.mETERNO" column="METERNO" />
+		<result property="rbUser.rbrlInfo" column="RbrlInfo" />
+		<result property="rbUser.rbrlInfo.mBUSID" column="MBUSID" />
+		<result property="rbUser.rbrlInfo.mETERID" column="METERID" />
+		<result property="rbUser.rbrlInfo.mETERNLLJ" column="METERNLLJ" />
+		<result property="rbUser.rbrlInfo.mETERTJ" column="METERTJ" />
+		<result property="rbUser.rbrlInfo.mETERLS" column="METERLS" />
+		<result property="rbUser.rbrlInfo.mETERGL" column="METERGL"/>
+		<result property="rbUser.rbrlInfo.mETERJSWD" column="METERJSWD" />
+		<result property="rbUser.rbrlInfo.mETERHSWD" column="METERHSWD" />
+		<result property="rbUser.rbrlInfo.mETERWC" column="METERWC" />
+		<result property="rbUser.rbrlInfo.dDATE" column="DDATE" />
+		<result property="rbUser.rbrlInfo.tmeter.AREANAME" column="AREANAME" />
+	</resultMap>
+	<select id="findRbrlUser" resultMap="rbrlUser">
+   select    top 500 ta.AREANAME,tc.CLIENTNO,tc.CLIENTNAME,tc.ADDRESS,tm.MBUSID,tm.METERID,tm.METERNLLJ,
+      tm.METERTJ,tm.METERLS,tm.METERGL,tm.METERJSWD,tm.METERHSWD,tm.METERWC,tm.DDATE
+   from tarea ta,tmeter tm,tclient tc,tdoor_meter td where tc.CLIENTNO = td.CLIENTNO and tm.METERID = td.METERNO and ta.AREAGUID = tm.AREAGUID order by td.CLIENTNO 
+	</select>
+	<select id="SearFind" resultMap="rbrlUser" parameterType="RbrlUser">
+	select  ta.AREANAME,tc.CLIENTNO,tc.CLIENTNAME,tc.ADDRESS,tm.MBUSID,tm.METERID,tm.METERNLLJ,
+      tm.METERTJ,tm.METERLS,tm.METERGL,tm.METERJSWD,tm.METERHSWD,tm.METERWC,tm.DDATE
+   from tarea ta,tmeter tm,tclient tc,tdoor_meter td where tc.CLIENTNO = td.CLIENTNO and tm.METERID = td.METERNO and ta.AREAGUID = tm.AREAGUID 
+     	<if test="xqName!='--选择小区名称--'">
+			and ta.AREANAME = #{xqName}
+		</if>
+			<if test="recordTime1!=null and recordTime1!=''">
+			and tm.DDATE &gt;= #{recordTime1}
+		</if>
+		<if test="recordTime2!=null and recordTime2!=''">
+			and tm.DDATE &lt;=#{recordTime2}
+		</if>
+		order by tm.DDATE desc
+	</select>
+	
+	<select id="findUserInfo" resultMap="rbrlUser">
+        select    top 500 ta.AREANAME,tc.CLIENTNO,tc.CLIENTNAME,tc.ADDRESS,tm.MBUSID,tm.METERID,tm.METERNLLJ,
+      tm.METERTJ,tm.METERLS,tm.METERGL,tm.METERJSWD,tm.METERHSWD,tm.METERWC,tm.DDATE
+   from tarea ta,tmeter tm,tclient tc,tdoor_meter td where tc.CLIENTNO = td.CLIENTNO and tm.METERID = td.METERNO and ta.AREAGUID = tm.AREAGUID order by tm.DDATE desc
+	</select>
+	<select id="SearFindInfo" resultMap="rbrlUser" parameterType="RbrlUser">
+	  select  top 500 ta.AREANAME,tc.CLIENTNO,tc.CLIENTNAME,tc.ADDRESS,tm.MBUSID,tm.METERID,tm.METERNLLJ,
+      tm.METERTJ,tm.METERLS,tm.METERGL,tm.METERJSWD,tm.METERHSWD,tm.METERWC,tm.DDATE
+      from tarea ta,tmeter tm,tclient tc,tdoor_meter td where tc.CLIENTNO = td.CLIENTNO and tm.METERID = td.METERNO and ta.AREAGUID = tm.AREAGUID 
+     	<if test="xqName!='--选择小区名称--'">
+			and ta.AREANAME = #{xqName}
+		</if>
+			<if test="recordTime1!=null and recordTime1!=''">
+			and tm.DDATE &gt;= #{recordTime1}
+		</if>
+		<if test="recordTime2!=null and recordTime2!=''">
+			and tm.DDATE &lt;=#{recordTime2}
+		</if>
+		order by tm.DDATE desc
+	</select>
+</mapper>
