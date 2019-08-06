@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd"
+		>
+	<context:annotation-config />
+	<aop:aspectj-autoproxy />
+	<!-- 扫描service层 -->
+	<context:component-scan base-package="com.hnzy.*.service"></context:component-scan>
+	<!-- 加载数据库配置文件 -->
+	<context:property-placeholder location="classpath:jdbc.properties" />
+	<!-- 配置数据库连接池 -->
+	 <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		p:url="${jdbc.url}"
+	    p:username="${jdbc.user}" 
+		p:password="${jdbc.password}"
+		p:driverClassName="${jdbc.driver}" 
+		p:maxActive="30"
+		p:maxIdle="10"
+		p:maxWait="1000" /> 
+	<!-- 配置mybatis session工厂类，指定数据源，主配置文件，mapper映射文件，实体类所在包信息 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"
+		p:dataSource-ref="dataSource" 
+		p:configLocation="classpath:mybatis/config.xml"
+		p:mapperLocations="classpath:mybatis/mapper/*.xml"
+		p:typeAliasesPackage="com.hnzy.*.pojo" 
+		/>
+	<!-- 指定dao接口所在位置，该类会根据接口和mapper配置文件自动创建接口的实现类，service层直接使用即可 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer"
+		p:basePackage="com.hnzy.*.dao" />
+	<!-- 动态配置数据源 -->  
+  	<!-- socket开始 ===========-->
+		<bean class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+        <property name="customEditors">
+            <map>
+                <entry key="java.net.SocketAddress"
+                    value="org.apache.mina.integration.beans.InetSocketAddressEditor">
+                </entry>
+            </map>
+        </property>
+    </bean>
+	 <bean id="ioAcceptor" class="org.apache.mina.transport.socket.nio.NioSocketAcceptor"
+        init-method="bind" destroy-method="unbind">
+        <!--端口号-->
+        <property name="defaultLocalAddress" value=":60001" />
+        <!--绑定自己实现的handler-->
+        <property name="handler" ref="serverHandler" />
+        <!--声明过滤器的集合-->
+        <property name="filterChainBuilder" ref="filterChainBuilder" />
+        <property name="reuseAddress" value="true" />
+    </bean>
+	<bean id="filterChainBuilder"
+        class="org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder">
+        <property name="filters">
+            <map>
+                <!--mina自带的线程池filter-->
+                <entry key="executor" value-ref="executorFilter" />
+                <entry key="mdcInjectionFilter" value-ref="mdcInjectionFilter" />
+                <!--自己实现的编解码器filter-->
+                <entry key="codecFilter" value-ref="codecFilter" />
+                <!--日志的filter-->
+                <entry key="loggingFilter" value-ref="loggingFilter" />
+                <!--心跳filter-->
+                <entry key="keepAliveFilter" value-ref="keepAliveFilter" />
+            </map>
+        </property>
+    </bean>
+ <!-- executorFilter多线程处理 -->  
+    <bean id="executorFilter" class="org.apache.mina.filter.executor.ExecutorFilter" />
+    <bean id="mdcInjectionFilter" class="org.apache.mina.filter.logging.MdcInjectionFilter">
+        <constructor-arg value="remoteAddress" />
+    </bean>
+
+    <!--日志-->
+    <bean id="loggingFilter" class="org.apache.mina.filter.logging.LoggingFilter" />
+
+    <!--编解码-->
+    <bean id="codecFilter" class="org.apache.mina.filter.codec.ProtocolCodecFilter">
+        <constructor-arg>
+            <!--构造函数的参数传入自己实现的对象-->
+            <bean class="com.hnzy.socket.codec.Str16CodecFactory"></bean>
+        </constructor-arg>
+    </bean>
+
+    <!--心跳检测filter-->
+    <bean id="keepAliveFilter" class="org.apache.mina.filter.keepalive.KeepAliveFilter">
+        <!--构造函数的第一个参数传入自己实现的工厂-->
+        <constructor-arg>
+            <bean class="com.hnzy.socket.server.ServerKeepAliveFactory"></bean>
+        </constructor-arg>
+        <!--第二个参数需要的是IdleStatus对象，value值设置为读写空闲-->
+        <constructor-arg type = "org.apache.mina.core.session.IdleStatus" value="BOTH_IDLE" >
+       </constructor-arg>
+        <!--心跳频率，不设置则默认60s  -->
+        <property name="requestInterval" value="60" />
+        <!--心跳超时时间，不设置则默认30s    -->
+        <property name="requestTimeout" value="30" />
+        <!--不设置默认false-->
+        <property name="forwardEvent" value="true" />
+    </bean>
+      <bean id="serverHandler" class="com.hnzy.socket.server.ServerHandler" />
+    <!-- socket结束 ===========-->
+    
+	<!-- 事物管理 -->
+	 <bean id="txManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+		p:dataSource-ref="dataSource" />
+
+	<!-- 切面编程  -->
+	<aop:config>
+		<aop:pointcut expression="execution(* com.hnzy.*.service.**.*(..))"
+			id="serviceMethods" />
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceMethods" />
+	</aop:config> 
+	<tx:advice id="txAdvice" transaction-manager="txManager">
+		<tx:attributes>
+			<tx:method name="save" propagation="REQUIRED" />
+			<tx:method name="update*" propagation="REQUIRED" />
+			<tx:method name="delete*" propagation="REQUIRED" />
+			<tx:method name="get*" read-only="true" />
+			<tx:method name="find*" read-only="true" />
+		</tx:attributes>
+	</tx:advice> 
+</beans>

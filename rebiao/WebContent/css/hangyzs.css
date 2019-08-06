@@ -1,0 +1,286 @@
+* {
+	padding: 0px;
+	border: 0px;
+	margin: 0px;
+}
+ul li{
+	list-style:none;
+}
+
+
+/*国家法规 */
+
+.trade_new{
+	width:100%;
+}
+
+.all_trade_option{
+	display:block;
+	width:99.8%;
+	height:40px;
+	background-color:#ccc;
+	margin:0px auto;
+	font-size:12px;
+}
+
+input[name="check"]{
+	width:16px;
+	height:16px;
+	margin-left:20px;
+}
+.all_trade_option span{
+	font-size:14px;
+	padding-left:6px;
+}
+
+
+td a{
+	text-decoration:none;
+	color:#333;
+}
+
+td a:hover{
+	text-decoration:underline;
+	color: 	CornflowerBlue;
+}
+
+
+/* 操作按钮 */
+#trade_option_del,
+#trade_option_cr{
+	margin-top:7px;
+	margin-left:20px;
+	border:none;
+	background-color:rgb(60,61,61);
+	width:60px;
+	height:24px;
+	margin-right:6px;
+	color:#fff;
+	border-radius:3px;
+}
+
+.del_btn,
+.mod_btn{
+	border:none;
+	background-color:rgb(60,61,61);
+	width:30px;
+	height:24px;
+	margin-right:6px;
+	margin-top:2px;
+	color:#fff;
+	font-size: 12px;
+	border-radius:4px;
+}
+	
+	
+/* 新增法规 修改法规 */
+.trade_crea,
+.trade_modify{
+		display:none;
+		position: fixed;
+		left: 0;
+	    top:0;
+	    right:0;
+	    bottom:0;
+	    z-index: 100; 
+		background-color:rgba(0,0,0,0.6);
+	}
+	
+	/* 新增修改弹出框关闭按钮 */
+	.trade_crea .close,
+	.trade_modify .close{
+		display:block;
+		background-color:rgb(193,213,43);
+		width:24px;
+		height:24px;
+		color: #fff;
+    	border-radius: 13px;
+		position:absolute;
+		top:36px;
+		right:7%;
+		line-height: 24px;
+   		text-align: center;
+   		font-size: 18px;
+	}
+	
+	.trade_crea .close::before,
+	.trade_modify .close::before {
+	    content: "\2716";
+	}
+	
+.trade_crea_body,
+.trade_modify_body{
+		width:80%;
+		height:600px;
+		margin:50px auto;
+		text-align:left;
+		background-color:#fcfcfc;
+		border-radius:20px;
+		position:fix
+	}
+
+.trade_crea h5,
+.trade_modify h5{
+	color:#2B2D31;
+	padding-top:10px;
+	text-align:center;
+}
+	
+	.trade_crea form,
+	.trade_modify form{
+		width:70%;
+		margin:0 auto;
+	}
+	
+	.trade_crea p,
+	.trade_modify p{
+		height:30px;
+		line-height:30px;
+	}
+	
+	.trade_crea  p:nth-child(2),
+	.trade_modify p:nth-child(2){
+		height:300px;
+		margin-bottom:30px;
+		position:relative;
+	}
+	
+	.trade_crea p:nth-child(2) span,
+	.trade_modify p:nth-child(2) span{
+		position:relative;
+		top:-300px;
+	}
+	
+	.trade_crea p span,
+	.trade_modify p span{
+		display:inline-block;
+		width:70px;
+		font-size:14px;
+		color:#333;
+		text-align:right;
+		margin-right:6px;
+		margin-left:20px;
+	}
+	
+	.trade_crea p input,
+	.trade_modify p input{
+		width:60%;
+		height:24px;
+		background-color:#f0f0f0;
+		border:none;
+		border-radius:4px;
+		padding:2px;
+	}
+	
+	.trade_crea p input:hover,
+	.trade_modify p input:hover{
+		border:1px solid #cde1ff;
+		
+	}
+	
+	.trade_crea p textarea,
+	.trade_modify p textarea{
+		display:inline-block;
+		width:80%;
+		height:300px;
+		background-color:#f0f0f0;
+		border:none;
+		border-radius:4px;
+		resize:none;
+		font-size:13px;
+		color:#333;
+		padding:6px;
+	}
+	
+	
+	.trade_crea p.trade_crea_p,
+	.trade_modify p.trade_mod_p{
+		text-align:center;
+	}
+	
+	.trade_crea p input[type="submit"],
+	.trade_modify p input[type="submit"]{
+		width:80px;
+		height:30px;
+		background-color:#2B2D31;
+		color:#fff;
+	}
+	
+	
+	
+	/* 查看文章 */
+.wz_look {
+	display: none;
+	position: fixed;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 100;
+	background-color: rgba(0, 0, 0, 0.6);
+}
+
+
+.wz_look .close {
+	display: block;
+	background-color: rgb(193, 213, 43);
+	width: 24px;
+	height: 24px;
+	color: #fff;
+	border-radius: 13px;
+	position: absolute;
+	top: 36px;
+	right: 7%;
+	line-height: 24px;
+	text-align: center;
+	font-size: 18px;
+}
+
+.wz_look .close::before
+	{
+	content: "\2716";
+}
+
+.wz_look_body {
+	width: 70%;
+	height:750px;
+	margin: 50px auto;
+	text-align: left;
+	background-color: #fcfcfc;
+	border-radius: 20px;
+	position: fix
+}
+
+.wz_look_body div{
+	width: 70%;
+	margin: 0 auto;
+}
+.wz_look_body div .wz_look_title{
+	color: #2B2D31;
+	padding-top: 20px;
+	text-align: center;
+}
+.wz_look_body div p{
+	width:100%;
+	margin-top:-10px;
+	text-align:right;
+}
+.wz_look_body div .wz_look_autor,
+.wz_look_body div .wz_look_time{
+	width:auto;
+	display:inline-block;
+	margin-left:6px;
+	margin-right:14px;
+}
+
+.wz_look_body .wz_look_content{
+	display:block;
+	width: 76%;
+	height:600px;
+	min-height:100px;
+	margin:0px auto;
+	overflow-y:auto;
+	border:1px dashed #aaa;
+	border-radius:20px;
+	padding:10px;
+}

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "http://mybatis.org/dtd/mybatis-3-config.dtd" "mybatis-3-config.dtd" >
+<configuration>
+<!-- 	<typeAliases>
+	
+	<typeAlias type="com.hnzy.hot.pojo.YhMessage" alias="YhMessage" />
+	<typeAlias type="com.hnzy.hot.pojo.Jzq" alias="Jzq" />
+
+	<typeAlias type="com.hnzy.hot.pojo.Fp" alias="Fp" />
+	<typeAlias type="com.hnzy.hot.pojo.Dj" alias="Dj" />
+
+	<typeAlias type="com.hnzy.hot.pojo.Gl" alias="Gl" />
+	<typeAlias type="com.hnzy.hot.pojo.Rz" alias="Rz" />
+	<typeAlias type="com.hnzy.hot.pojo.Jf" alias="Jf" />
+	<typeAlias type="com.hnzy.hot.pojo.Data" alias="Data" />
+	<typeAlias type="com.hnzy.hot.pojo.Cg" alias="Cg" />
+	<typeAlias type="com.hnzy.hot.pojo.Jf" alias="Jf" />
+    <typeAlias type="com.hnzy.hot.pojo.Zsk" alias="Zsk" />
+	<typeAlias type="com.hnzy.hot.pojo.User" alias="User" />
+	<typeAlias type="com.hnzy.hot.pojo.FyFl" alias="FyFl" />
+	</typeAliases>  -->
+
+</configuration>
